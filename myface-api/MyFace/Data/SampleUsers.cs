@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 using MyFace.Models.Database;
 
 namespace MyFace.Data
@@ -119,14 +121,29 @@ namespace MyFace.Data
 
         private static User CreateRandomUser(int index)
         {
+            var password = "generateHashedPassword";
+            var salt = new byte[128 / 8];
+            using (var rng = System.Security.Cryptography.RandomNumberGenerator.Create())
+            {
+                rng.GetBytes(salt);
+            }
+
+            // derive a 256-bit subkey (use HMACSHA1 with 10,000 iterations)
+            var hashed = Convert.ToBase64String(KeyDerivation.Pbkdf2(
+                password: password,
+                salt: salt,
+                prf: KeyDerivationPrf.HMACSHA1,
+                iterationCount: 10000,
+                numBytesRequested: 256 / 8));
+
             return new User
             {
                 FirstName = _data[index][0],
                 LastName = _data[index][1],
                 Username = _data[index][2],
                 Email = _data[index][3],
-                hashed_password = "generateHashedPassword",
-                salt = "generateSalt",
+                hashed_password = hashed,
+                salt = Convert.ToBase64String(salt),
                 ProfileImageUrl = ImageGenerator.GetProfileImage(_data[index][2]),
                 CoverImageUrl = ImageGenerator.GetCoverImage(index),
             };

@@ -63,35 +63,33 @@ namespace MyFace.Repositories
 
         public User Create(CreateUserRequest newUser)
         {
-          var password = newUser.Password;
+            var password = newUser.Password;
 
             // generate a 128-bit salt using a secure PRNG
-            byte[] salt = new byte[128 / 8];
+            var salt = new byte[128 / 8];
             using (var rng = RandomNumberGenerator.Create())
             {
                 rng.GetBytes(salt);
             }
-            Console.WriteLine($"Salt: {Convert.ToBase64String(salt)}");
-
+            
             // derive a 256-bit subkey (use HMACSHA1 with 10,000 iterations)
-            string hashed = Convert.ToBase64String(KeyDerivation.Pbkdf2(
+            var hashed = Convert.ToBase64String(KeyDerivation.Pbkdf2(
                 password: password,
                 salt: salt,
                 prf: KeyDerivationPrf.HMACSHA1,
                 iterationCount: 10000,
                 numBytesRequested: 256 / 8));
-            Console.WriteLine($"Hashed: {hashed}");
 
             var insertResponse = _context.Users.Add(new User
             {
                 FirstName = newUser.FirstName,
                 LastName = newUser.LastName,
                 Email = newUser.Email,
-                Username = newUser.Username,           
-                hashed_password = hashed,   
+                Username = newUser.Username,
+                hashed_password = hashed,
                 salt = Convert.ToBase64String(salt),
                 ProfileImageUrl = newUser.ProfileImageUrl,
-                CoverImageUrl = newUser.CoverImageUrl,
+                CoverImageUrl = newUser.CoverImageUrl
             });
             _context.SaveChanges();
 
