@@ -2,6 +2,7 @@
 import {Page} from "../Page/Page";
 import {LoginContext} from "../../Components/LoginManager/LoginManager";
 import "./Login.scss";
+import { fetchlogin } from '../../Api/apiClient';
 
 export function Login(): JSX.Element {
     const loginContext = useContext(LoginContext);
@@ -11,7 +12,21 @@ export function Login(): JSX.Element {
     
     function tryLogin(event: FormEvent) {
         event.preventDefault();
-        loginContext.logIn();
+    //     //encoded
+    //    let isValid;
+    //    fetch(`https://localhost:5001/users/login`, {
+    //     method: "GET",
+    //     headers: {
+    //         "Content-Type": "application/json",
+    //         "Authorization": "Basic dGVzdC11c2VyOnNlY3JldA==",
+    //     }})
+    //         .then(response => response.json())
+    //         .then(data => isValid = data);
+
+    //     if (isValid)
+    //     {
+            loginContext.logIn();
+        // }
     }
     
     return (

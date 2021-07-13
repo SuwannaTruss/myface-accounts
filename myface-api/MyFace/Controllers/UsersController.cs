@@ -16,6 +16,7 @@ namespace MyFace.Controllers
             _users = users;
         }
 
+
         [HttpGet("")]
         public ActionResult<UserListResponse> Search([FromQuery] UserSearchRequest searchRequest)
         {
@@ -28,6 +29,16 @@ namespace MyFace.Controllers
             var userCount = _users.Count(searchRequest);
             return UserListResponse.Create(searchRequest, users, userCount);
         }
+
+    // [HttpGet("/login")]
+    //     public bool login()
+    //     {
+    //         if (!IsAuthenticated())
+    //         {
+    //             return Unauthorized();
+    //         } 
+    //         return true;
+    //     }
 
         [HttpGet("{id}")]
         public ActionResult<UserResponse> GetById([FromRoute] int id)
@@ -59,10 +70,6 @@ namespace MyFace.Controllers
         [HttpPatch("{id}/update")]
         public ActionResult<UserResponse> Update([FromRoute] int id, [FromBody] UpdateUserRequest update)
         {
-            if (!IsAuthenticated())
-            {
-                return Unauthorized();
-            }
 
             if (!ModelState.IsValid)
             {
@@ -76,11 +83,6 @@ namespace MyFace.Controllers
         [HttpDelete("{id}")]
         public IActionResult Delete([FromRoute] int id)
         {
-            if (!IsAuthenticated())
-            {
-                return Unauthorized();
-            }
-
             _users.Delete(id);
             return Ok();
         }

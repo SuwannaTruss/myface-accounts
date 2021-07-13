@@ -46,7 +46,24 @@ export async function fetchUsers(searchTerm: string, page: number, pageSize: num
 }
 
 export async function fetchUser(userId: string | number): Promise<User> {
-    const response = await fetch(`https://localhost:5001/users/${userId}`);
+    const response = await fetch(`https://localhost:5001/users/${userId}`, {
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": "Basic dGVzdC11c2VyOnNlY3JldA==",
+        }
+    });
+    return await response.json();
+}
+
+export async function fetchlogin(): Promise<User> {
+    const response = await fetch(`https://localhost:5001/users/login`, {
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": "Basic dGVzdC11c2VyOnNlY3JldA==",
+        }
+    });
     return await response.json();
 }
 
@@ -74,7 +91,8 @@ export async function createPost(newPost: NewPost) {
     const response = await fetch(`https://localhost:5001/posts/create`, {
         method: "POST",
         headers: {
-            "Content-Type": "application/json"
+            "Content-Type": "application/json",
+            // "Authorization": "Basic dGVzdC11c2VyOnNlY3JldA=="
         },
         body: JSON.stringify(newPost),
     });
