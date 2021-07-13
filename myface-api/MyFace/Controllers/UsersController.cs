@@ -19,6 +19,11 @@ namespace MyFace.Controllers
         [HttpGet("")]
         public ActionResult<UserListResponse> Search([FromQuery] UserSearchRequest searchRequest)
         {
+            if (!IsAuthenticated())
+            {
+                return Unauthorized();
+            }
+
             var users = _users.Search(searchRequest);
             var userCount = _users.Count(searchRequest);
             return UserListResponse.Create(searchRequest, users, userCount);
@@ -27,8 +32,11 @@ namespace MyFace.Controllers
         [HttpGet("{id}")]
         public ActionResult<UserResponse> GetById([FromRoute] int id)
         {
-            var authHeader = HttpContext.Request.Headers["Authorization"];
-            var isauthenticate = _users.Authentication(authHeader.ToString());
+            if (!IsAuthenticated())
+            {
+                return Unauthorized();
+            }
+
             var user = _users.GetById(id);
             return new UserResponse(user);
         }
@@ -51,6 +59,11 @@ namespace MyFace.Controllers
         [HttpPatch("{id}/update")]
         public ActionResult<UserResponse> Update([FromRoute] int id, [FromBody] UpdateUserRequest update)
         {
+            if (!IsAuthenticated())
+            {
+                return Unauthorized();
+            }
+
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
@@ -63,8 +76,19 @@ namespace MyFace.Controllers
         [HttpDelete("{id}")]
         public IActionResult Delete([FromRoute] int id)
         {
+            if (!IsAuthenticated())
+            {
+                return Unauthorized();
+            }
+
             _users.Delete(id);
             return Ok();
+        }
+
+        private bool IsAuthenticated()
+        {
+            var authHeader = HttpContext.Request.Headers["Authorization"].ToString();
+            return _users.Authentication(authHeader);
         }
     }
 }
