@@ -1,17 +1,15 @@
-﻿using System;
+﻿using MyFace.Models.Database;
+using MyFace.Repositories;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.AspNetCore.Cryptography.KeyDerivation;
-using MyFace.Models.Database;
-using MyFace.Repositories;
 
 namespace MyFace.Data
 {
     public static class SampleUsers
     {
         public static int NumberOfUsers = 100;
-        
-        private static IList<IList<string>> _data = new List<IList<string>>
+
+        private static readonly IList<IList<string>> _data = new List<IList<string>>
         {
             new List<string> { "Kania", "Placido", "kplacido0", "kplacido0@qq.com" },
             new List<string> { "Scotty", "Gariff", "sgariff1", "sgariff1@biblegateway.com" },
@@ -114,11 +112,8 @@ namespace MyFace.Data
             new List<string> { "Jane", "Iceton", "jiceton2q", "jiceton2q@lulu.com" },
             new List<string> { "Marjy", "Beadell", "mbeadell2r", "mbeadell2r@delicious.com" }
         };
-        
-        public static IEnumerable<User> GetUsers()
-        {
-            return Enumerable.Range(0, NumberOfUsers).Select(CreateRandomUser);
-        }
+
+        public static IEnumerable<User> GetUsers() => Enumerable.Range(0, NumberOfUsers).Select(CreateRandomUser);
 
         private static User CreateRandomUser(int index)
         {

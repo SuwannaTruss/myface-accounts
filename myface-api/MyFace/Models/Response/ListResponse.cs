@@ -1,7 +1,7 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using MyFace.Models.Database;
+﻿using MyFace.Models.Database;
 using MyFace.Models.Request;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace MyFace.Models.Response
 {
@@ -9,7 +9,7 @@ namespace MyFace.Models.Response
     {
         private readonly string _path;
         private readonly string _filters;
-        
+
         public IEnumerable<T> Items { get; }
         public int TotalNumberOfItems { get; }
         public int Page { get; }
@@ -28,16 +28,13 @@ namespace MyFace.Models.Response
             _path = path;
             _filters = search.Filters;
         }
-        
-        private bool HasNextPage()
-        {
-            return Page * PageSize < TotalNumberOfItems;
-        }
+
+        private bool HasNextPage() => Page * PageSize < TotalNumberOfItems;
     }
 
     public class PostListResponse : ListResponse<PostResponse>
     {
-        private PostListResponse(SearchRequest search, IEnumerable<PostResponse> items, int totalNumberOfItems) 
+        private PostListResponse(SearchRequest search, IEnumerable<PostResponse> items, int totalNumberOfItems)
             : base(search, items, totalNumberOfItems, "posts") { }
 
         public static PostListResponse Create(SearchRequest search, IEnumerable<Post> posts, int totalNumberOfItems)
@@ -46,24 +43,24 @@ namespace MyFace.Models.Response
             return new PostListResponse(search, postModels, totalNumberOfItems);
         }
     }
-    
+
     public class UserListResponse : ListResponse<UserResponse>
     {
-        private UserListResponse(SearchRequest search, IEnumerable<UserResponse> items, int totalNumberOfItems) 
+        private UserListResponse(SearchRequest search, IEnumerable<UserResponse> items, int totalNumberOfItems)
             : base(search, items, totalNumberOfItems, "users") { }
-        
+
         public static UserListResponse Create(SearchRequest search, IEnumerable<User> users, int totalNumberOfItems)
         {
             var userModels = users.Select(user => new UserResponse(user));
             return new UserListResponse(search, userModels, totalNumberOfItems);
         }
     }
-    
+
     public class InteractionListResponse : ListResponse<InteractionResponse>
     {
-        private InteractionListResponse(SearchRequest search, IEnumerable<InteractionResponse> items, int totalNumberOfItems) 
+        private InteractionListResponse(SearchRequest search, IEnumerable<InteractionResponse> items, int totalNumberOfItems)
             : base(search, items, totalNumberOfItems, "interactions") { }
-        
+
         public static InteractionListResponse Create(SearchRequest search, IEnumerable<Interaction> interactions, int totalNumberOfItems)
         {
             var interactionModels = interactions.Select(i => new InteractionResponse(i));

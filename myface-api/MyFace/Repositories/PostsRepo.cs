@@ -1,9 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using MyFace.Models.Database;
 using MyFace.Models.Request;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace MyFace.Repositories
 {
@@ -18,7 +18,7 @@ namespace MyFace.Repositories
         Post Update(int id, UpdatePostRequest update);
         void Delete(int id);
     }
-    
+
     public class PostsRepo : IPostsRepo
     {
         private readonly MyFaceDbContext _context;
@@ -27,7 +27,7 @@ namespace MyFace.Repositories
         {
             _context = context;
         }
-        
+
         public IEnumerable<Post> Search(PostSearchRequest search)
         {
             return _context.Posts
@@ -36,7 +36,7 @@ namespace MyFace.Repositories
                 .Skip((search.Page - 1) * search.PageSize)
                 .Take(search.PageSize);
         }
-        
+
         public IEnumerable<Post> SearchFeed(FeedSearchRequest search)
         {
             return _context.Posts
@@ -95,7 +95,7 @@ namespace MyFace.Repositories
 
             _context.Posts.Update(post);
             _context.SaveChanges();
-            
+
             return post;
         }
 

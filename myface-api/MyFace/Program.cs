@@ -1,11 +1,8 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using MyFace.Data;
-using MyFace.Models.Database;
+using System.Linq;
 
 namespace MyFace
 {
@@ -16,7 +13,7 @@ namespace MyFace
             var host = CreateHostBuilder(args).Build();
 
             CreateDbIfNotExists(host);
-            
+
             host.Run();
         }
 

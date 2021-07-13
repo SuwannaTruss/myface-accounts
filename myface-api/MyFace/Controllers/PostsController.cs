@@ -8,14 +8,14 @@ namespace MyFace.Controllers
     [ApiController]
     [Route("/posts")]
     public class PostsController : ControllerBase
-    {    
+    {
         private readonly IPostsRepo _posts;
 
         public PostsController(IPostsRepo posts)
         {
             _posts = posts;
         }
-        
+
         [HttpGet("")]
         public ActionResult<PostListResponse> Search([FromQuery] PostSearchRequest searchRequest)
         {
@@ -38,7 +38,7 @@ namespace MyFace.Controllers
             {
                 return BadRequest(ModelState);
             }
-            
+
             var post = _posts.Create(newPost);
 
             var url = Url.Action("GetById", new { id = post.Id });

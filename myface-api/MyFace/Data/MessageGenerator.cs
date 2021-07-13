@@ -4,7 +4,7 @@ namespace MyFace.Data
 {
     public class MessageGenerator
     {
-        private static IList<string> _messages = new List<string>
+        private static readonly IList<string> _messages = new List<string>
         {
             "He had a hidden stash underneath the floorboards in the back room of the house.",
             "For the 216th time, he said he would quit drinking soda after this last Coke.",
@@ -208,9 +208,6 @@ namespace MyFace.Data
             "Before he moved to the inner city, he had always believed that security complexes were psychological."
         };
 
-        public static string GetMessage(int index)
-        {
-            return _messages[index];
-        }
+        public static string GetMessage(int index) => _messages[index];
     }
 }

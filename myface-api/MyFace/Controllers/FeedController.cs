@@ -14,7 +14,7 @@ namespace MyFace.Controllers
         {
             _posts = posts;
         }
-        
+
         [HttpGet("")]
         public ActionResult<FeedModel> GetFeed([FromQuery] FeedSearchRequest searchRequest)
         {

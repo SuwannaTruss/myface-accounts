@@ -1,11 +1,11 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Cryptography.KeyDerivation;
+using MyFace.Models.Database;
+using MyFace.Models.Request;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography;
-using Microsoft.AspNetCore.Cryptography.KeyDerivation;
-using Microsoft.EntityFrameworkCore;
-using MyFace.Models.Database;
-using MyFace.Models.Request;
+using System.Text;
 
 namespace MyFace.Repositories
 {
@@ -17,8 +17,9 @@ namespace MyFace.Repositories
         User Create(CreateUserRequest newUser);
         User Update(int id, UpdateUserRequest update);
         void Delete(int id);
+        bool Authentication(string authHeader);
     }
-    
+
     public class UsersRepo : IUsersRepo
     {
         private readonly MyFaceDbContext _context;
@@ -27,11 +28,11 @@ namespace MyFace.Repositories
         {
             _context = context;
         }
-        
+
         public IEnumerable<User> Search(UserSearchRequest search)
         {
             return _context.Users
-                .Where(p => search.Search == null || 
+                .Where(p => search.Search == null ||
                             (
                                 p.FirstName.ToLower().Contains(search.Search) ||
                                 p.LastName.ToLower().Contains(search.Search) ||
@@ -46,7 +47,7 @@ namespace MyFace.Repositories
         public int Count(UserSearchRequest search)
         {
             return _context.Users
-                .Count(p => search.Search == null || 
+                .Count(p => search.Search == null ||
                             (
                                 p.FirstName.ToLower().Contains(search.Search) ||
                                 p.LastName.ToLower().Contains(search.Search) ||
@@ -59,6 +60,12 @@ namespace MyFace.Repositories
         {
             return _context.Users
                 .Single(user => user.Id == id);
+        }
+
+        public User GetByUsername(string username)
+        {
+            return _context.Users
+                .Single(user => user.Username == username);
         }
 
         public static string GenerateHash(string password, byte[] salt)
@@ -79,7 +86,7 @@ namespace MyFace.Repositories
             {
                 rng.GetBytes(salt);
             }
-            
+
             var insertResponse = _context.Users.Add(new User
             {
                 FirstName = newUser.FirstName,
@@ -119,5 +126,35 @@ namespace MyFace.Repositories
             _context.Users.Remove(user);
             _context.SaveChanges();
         }
+
+        public bool Authentication(string authHeader)
+        {
+            if (authHeader != null && authHeader.StartsWith("Basic"))
+            {
+                var encodedUsernamePassword = authHeader.Substring("Basic ".Length).Trim();
+                var encoding = Encoding.GetEncoding("iso-8859-1");
+                var usernamePassword = encoding.GetString(Convert.FromBase64String(encodedUsernamePassword));
+                //var decodedString = Encoding.UTF8.GetString(Convert.FromBase64String(encodedUsernamePassword));
+                var seperatorIndex = usernamePassword.IndexOf(':');
+
+                var username = usernamePassword.Substring(0, seperatorIndex);
+                var password = usernamePassword.Substring(seperatorIndex + 1);
+
+                var user = GetByUsername(username);
+                var checkPassword = GenerateHash(password, user.salt);
+                return user.hashed_password == checkPassword;
+
+            }
+            else
+            {
+                //Handle what happens if that isn't the case
+                throw new Exception("The authorization header is either empty or isn't Basic.");
+            }
+           
+
+        }
+
+
+
     }
 }
